@@ -59,6 +59,7 @@ export ARM_SUBSCRIPTION_ID="<Subscription_ID>"
 ```
 - Run Terraform
 ```
+cd terraform-aks
 terraform init
 terraform plan
 terraform apply
@@ -70,24 +71,37 @@ az aks get-credentials --resource-group flask-resource-group --name flask-aks-cl
 ```
 - Namespace Creation
 ```
-kubectl apply -f flask-namespace.yaml
+kubectl apply -f k8s/flask-namespace.yaml
 ```
 - Microservice Deployment
 ```
-kubectl apply -f flask-deployment.yaml
+kubectl apply -f k8s/flask-deployment.yaml
 kubectl get pods -n flask-app
 ```
 ## 5. Exposing the Microservice to the Internet
 - The service is exposed via a LoadBalancer
 ```
-kubectl apply -f flask-service.yaml
+kubectl apply -f k8s/flask-service.yaml
 kubectl get svc -n flask-app
 ```
-- Access: 57.153.22.15/users
+- Open in Browser: http://57.153.22.15/users
+
+<img width="408" height="97" alt="image" src="https://github.com/user-attachments/assets/6394f35c-97c0-443c-b2f2-74a6fa0d2dd7" />
+
+
 ## 6. Implementation of CI/CD with GitHub Actions
 - The workflow automates: Building Docker image, Pushing to DockerHub, and Deploying to AKS.
 - Triggered on push to main.
 - Workflow file: .github/workflows/ci-cd.yml
+- Workflow performs:
+```
+1) Checkout source
+2) Build Docker image
+3) Push to DockerHub
+4) Authenticate to Azure
+5) Apply Kubernetes manifests
+6) Restart rollout
+```
 
 ## 7. Monitoring
 - Enable Managed Prometheus Metrics
@@ -100,14 +114,15 @@ az aks update \
   --name flask-aks-cluster \
   --enable-azure-monitor-metrics
 ```
-Verify metrics:
+
+- Verify metrics:
 
 <img width="597" height="58" alt="image" src="https://github.com/user-attachments/assets/8aee2504-248c-4ca2-ac4b-d5cab36a3770" />
 <img width="472" height="76" alt="image" src="https://github.com/user-attachments/assets/aa05e4e4-9a38-4aa4-b082-5018a2f77c60" />
 
 
 - Grafana Dashboards
-Azure provides built-in Grafana dashboards under:
+Azure Managed Grafana is automatically integrated with Azure Monitor under:
 AKS → Monitoring → Dashboards with Grafana (preview)
 
 <img width="1615" height="677" alt="image" src="https://github.com/user-attachments/assets/ac4b3eb5-ca9a-4ced-8b3e-b962d84a79ba" />
