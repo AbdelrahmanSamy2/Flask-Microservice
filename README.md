@@ -4,6 +4,39 @@ This project demonstrates deploying a Python Flask microservice on Kubernetes us
 
 ---
 
+## Project Structure
+```
+.
+├── app/                      # Flask application source code
+│   ├── __init__.py           # App factory / initialization
+│   ├── main.py               # Entry point / routes registration
+│   ├── routes/               # HTTP route handlers
+│   │   ├── user_routes.py
+│   │   └── product_routes.py
+│   └── services/             # Application logic / service layer
+│       ├── user_service.py
+│       └── product_service.py
+│
+├── run.py                    # Application entrypoint script
+├── requirements.txt          # Python dependencies
+├── Dockerfile                # Container build instructions
+│
+├── k8s/                      # Kubernetes manifests
+│   ├── flask-namespace.yaml  # Namespace definition
+│   ├── flask-deployment.yaml # Deployment for Flask app
+│   └── flask-service.yaml    # LoadBalancer service
+│
+├── terraform-aks/            # Terraform infrastructure for AKS
+│   ├── main.tf               # Core AKS & networking components
+│   ├── variables.tf          # Input variables
+│   ├── terraform.tfvars      # Variable values (ignored in VCS ideally)
+│   ├── outputs.tf            # Output resource details
+│   ├── providers.tf          # Provider configuration
+│   └── terraform.tfstate*    # State files (local)
+│
+└── README.md                 # Documentation
+```
+
 ## 1. Clone the repo
 https://github.com/AbdelrahmanSamy2/Flask-Microservice
 
