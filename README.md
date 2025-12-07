@@ -26,6 +26,10 @@ terraform apply
 ```
 az aks get-credentials --resource-group flask-resource-group --name flask-aks-cluster
 ```
+### Namespace Creation
+```
+kubectl apply -f flask-namespace.yaml
+```
 ### Microservice Deployment
 ```
 kubectl create namespace flask-app
