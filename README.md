@@ -1,4 +1,4 @@
-# 🚀 Flask Microservice on Azure Kubernetes Service (AKS)
+# Flask Microservice on Azure Kubernetes Service (AKS)
 
 This project demonstrates deploying a Python Flask microservice on Kubernetes using Docker, Terraform, GitHub Actions, and Azure Monitor.
 
@@ -52,10 +52,7 @@ kubectl get svc -n flask-app
 ```
 - Access: 57.153.22.15/users
 ## 6. Implementation of CI/CD with GitHub Actions
-- The workflow automates:
-Build Docker image
-Push to DockerHub
-Deploy to AKS
+- The workflow automates: Building Docker image, Pushing to DockerHub, and Deploying to AKS.
 - Triggered on push to main.
 - Workflow file: .github/workflows/ci-cd.yml
 
@@ -79,3 +76,6 @@ Verify metrics:
 - Grafana Dashboards
 Azure provides built-in Grafana dashboards under:
 AKS → Monitoring → Dashboards with Grafana (preview)
+
+<img width="1615" height="677" alt="image" src="https://github.com/user-attachments/assets/ac4b3eb5-ca9a-4ced-8b3e-b962d84a79ba" />
+
