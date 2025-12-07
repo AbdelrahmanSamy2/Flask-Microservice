@@ -122,8 +122,10 @@ az aks update \
 
 
 - Grafana Dashboards
+```
 Azure Managed Grafana is automatically integrated with Azure Monitor under:
 AKS → Monitoring → Dashboards with Grafana (preview)
+```
 
 <img width="1615" height="677" alt="image" src="https://github.com/user-attachments/assets/ac4b3eb5-ca9a-4ced-8b3e-b962d84a79ba" />
 
