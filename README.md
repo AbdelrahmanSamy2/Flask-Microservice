@@ -1,12 +1,21 @@
-# Flask-Microservice
+# 🚀 Flask Microservice on Azure Kubernetes Service (AKS)
 
-## Docker
+This project demonstrates deploying a Python Flask microservice on Kubernetes using Docker, Terraform, GitHub Actions, and Azure Monitor.
+
+---
+
+## 1. Clone the repo
+https://github.com/AbdelrahmanSamy2/Flask-Microservice
+
+## 2. Dockerization
+
+- Build and push the Docker image:
 ```
 docker build -t abdelrahmansamy97/flask-microservice:latest .
 docker push abdelrahmansamy97/flask-microservice:latest
 ```
-## Terraform-AKS
-### Azure CLI
+## 3. Provisioning Kubernetes Cluster (AKS using Terraform)
+- Configure Azure CLI
 ```
 az login
 az ad sp create-for-rbac --name "terraform-sp" --role "Contributor" --scopes "/subscriptions/<Subscription_ID>"
@@ -15,29 +24,58 @@ export ARM_CLIENT_SECRET="<password>"
 export ARM_TENANT_ID="<tenant_id>"
 export ARM_SUBSCRIPTION_ID="<Subscription_ID>"
 ```
-### Terraform
+- Run Terraform
 ```
 terraform init
 terraform plan
 terraform apply
 ```
-## Kubernetes
-### Kubectl Config
+## 4. Microservice Deployment on Kubernetes
+- Kubectl Config
 ```
 az aks get-credentials --resource-group flask-resource-group --name flask-aks-cluster
 ```
-### Namespace Creation
+- Namespace Creation
 ```
 kubectl apply -f flask-namespace.yaml
 ```
-### Microservice Deployment
+- Microservice Deployment
 ```
-kubectl create namespace flask-app
 kubectl apply -f flask-deployment.yaml
 kubectl get pods -n flask-app
 ```
-### Exposing to the Internet
+## 5. Exposing the Microservice to the Internet
+- The service is exposed via a LoadBalancer
 ```
 kubectl apply -f flask-service.yaml
 kubectl get svc -n flask-app
 ```
+- Access: 57.153.22.15/users
+## 6. Implementation of CI/CD with GitHub Actions
+- The workflow automates:
+Build Docker image
+Push to DockerHub
+Deploy to AKS
+- Triggered on push to main.
+- Workflow file: .github/workflows/ci-cd.yml
+
+## 7. Monitoring
+- Enable Managed Prometheus Metrics
+```
+SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+az account set --subscription "$SUBSCRIPTION_ID"
+
+az aks update \
+  --resource-group flask-resource-group \
+  --name flask-aks-cluster \
+  --enable-azure-monitor-metrics
+```
+Verify metrics:
+
+<img width="597" height="58" alt="image" src="https://github.com/user-attachments/assets/8aee2504-248c-4ca2-ac4b-d5cab36a3770" />
+<img width="472" height="76" alt="image" src="https://github.com/user-attachments/assets/aa05e4e4-9a38-4aa4-b082-5018a2f77c60" />
+
+
+- Grafana Dashboards
+Azure provides built-in Grafana dashboards under:
+AKS → Monitoring → Dashboards with Grafana (preview)
