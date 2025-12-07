@@ -1,0 +1,70 @@
+name: Flask Application CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "app/**"
+  workflow_dispatch: {}
+
+env:
+  IMAGE_NAME: flask-microservice
+  DOCKERHUB_NAMESPACE: ${{ secrets.DOCKERHUB_USERNAME }}
+  K8S_NAMESPACE: flask-app
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ${{ env.DOCKERHUB_NAMESPACE }}/${{ env.IMAGE_NAME }}:latest
+
+  deploy-to-aks:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Set AKS context
+        uses: azure/aks-set-context@v4
+        with:
+          resource-group: flask-resource-group
+          cluster-name: flask-aks-cluster
+          use-kubelogin: false
+
+      - name: Deploy the latest image
+        run: |
+          kubectl rollout restart deploy/flask-app -n ${{ env.K8S_NAMESPACE }}
+
+      - name: Check deployment rollout
+        run: |
+          kubectl rollout status deploy/flask-app -n ${{ env.K8S_NAMESPACE }}
+          kubectl get pods -n ${{ env.K8S_NAMESPACE }}
+          kubectl get svc -n ${{ env.K8S_NAMESPACE }}
